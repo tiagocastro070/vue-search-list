@@ -3,10 +3,21 @@ const DEFAULT_IMAGE_PLACEHOLDER =
   "https://via.placeholder.com/50/000000/FFFFFF";
 
 export default {
-  props: ["imgSrc", "name", "description", "date"],
+  props: ["imgSrc", "name", "description", "date", "searchTerm"],
   methods: {
     replaceByDefault(e) {
       e.target.src = DEFAULT_IMAGE_PLACEHOLDER;
+    },
+    highlightString(str) {
+      var reg = new RegExp(this.$props.searchTerm, "gi");
+
+      return str?.replace(reg, function (str) {
+        return (
+          '<span style="background-color: navajowhite; font-weight: inherit;">' +
+          str +
+          "</span>"
+        );
+      });
     },
   },
   computed: {
@@ -26,12 +37,11 @@ export default {
     <img :src="userAvatar" @error="replaceByDefault" class="rounded-circle" />
     <div>
       <h2>
-        <strong>{{ this.name.split(" ")[0] }}</strong
-        >,
-        <span>{{ this.name.split(" ")[1] }}</span>
+        <strong v-html="highlightString(this.name.split(' ')[0])"></strong>,
+        <span v-html="highlightString(this.name.split(' ')[1])"></span>
       </h2>
       <p>
-        <span>{{ this.description }}</span>
+        <span v-html="highlightString(this.description)"></span>
         <small>{{
           new Intl.DateTimeFormat(userNavigatorLang).format(new Date(this.date))
         }}</small>
